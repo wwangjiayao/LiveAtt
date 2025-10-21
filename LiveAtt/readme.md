@@ -2,7 +2,13 @@
 
 本项目为基于人脸识别的班级考勤系统，通过运行 `app.py` 启动服务，可实现网页端考勤展示和人脸识别签到功能。
 
+<img width="1180" height="397" alt="屏幕截图 2025-06-03 132440" src="https://github.com/user-attachments/assets/f57a1453-86b8-4028-b9d1-6c933cc74be2" />
+<img width="1109" height="854" alt="屏幕截图 2025-06-03 132605" src="https://github.com/user-attachments/assets/dea09c0a-a44e-461d-a93e-759c07c51584" />
+<img width="949" height="591" alt="屏幕截图 2025-06-03 132702" src="https://github.com/user-attachments/assets/b6b7bf2a-d813-4971-b93a-91abb08de721" />
+
+
 ------
+
 
 ## 🛠 环境依赖
 
@@ -80,5 +86,6 @@ python app.py
 - 请确保运行环境联网，下载完成后可离线使用。
 
 ### 方法三：自行训练
+
 
 参照实验报告和代码自行训练。
