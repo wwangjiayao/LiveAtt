@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>班级考勤系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Styles -->
+  <style>
+    :root {
+      --primary: #45B1C7;           /* 深蓝主色 */
+      --primary-light: #C5E6ED;     /* 浅蓝背景 */
+      --secondary: #074b90;         /* 亮蓝辅助色 - 用于按钮 */
+      --danger: #EF4444;            /* 红色 - 用于警告按钮 */
+      --text-dark: #1F2937;         /* 深色文本 */
+      --text-light: #F9FAFB;        /* 浅色文本 */
+      --bg-white: #FFFFFF;          /* 白色背景 */
+      --radius: 8px;                /* 圆角半径 */
+      --spacing: 1rem;              /* 基础间距 */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; color: var(--text-dark); background: #fff; }
+
+    header {
+      background: var(--primary);
+      padding: var(--spacing);
+      color: var(--text-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: var(--spacing);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      transition: background 0.3s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hero {
+      background: var(--primary);
+      color: var(--text-light);
+      text-align: center;
+      padding: 4rem var(--spacing);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      max-width: 800px;
+      font-weight: 600;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: auto;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    section {
+      padding: 3rem var(--spacing);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 添加悬浮效果 */
+    .btn-success {
+      background: var(--success);
+      color: var(--text-dark);
+    }
+
+    .btn-success:hover {
+      background: #C0C0C0; /* 按钮悬浮时的深色版本 */
+      transform: translateY(-2px); /* 轻微上移动画 */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 悬浮阴影 */
+    }
+
+    .btn-primary {
+      background: var(--secondary);
+      color: var(--text-light);
+    }
+
+    .btn-primary:hover {
+      /*background: #2563EB;*/
+      background: #808080;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-secondary {
+      background: var(--bg-white);
+      color: var(--secondary);
+      border: 2px solid var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--secondary);
+      color: var(--text-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: var(--text-light);
+    }
+
+    .btn-danger:hover {
+      background:  #808080;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing);
+      flex-wrap: wrap;
+      margin-top: var(--spacing);
+    }
+
+    #attendance {
+      background: var(--primary-light);
+    }
+
+    #register {
+      background: var(--bg-white);
+      text-align: center;
+    }
+
+    .stats {
+      display: inline-block;
+      padding: var(--spacing);
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: var(--spacing);
+      color: var(--text-dark);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); /* 调整卡片宽度 */
+      gap: var(--spacing);
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto; /* 确保网格容器居中 */
+      justify-items: center; /* 新增：使网格项水平居中 */
+    }
+
+    .card {
+      background: var(--bg-white);
+      padding: var(--spacing);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: var(--text-dark);
+      transition: transform 0.3s;
+      width: 100%; /* 确保卡片宽度一致 */
+      max-width: 300px; /* 限制卡片最大宽度 */
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .empty {
+      border: 2px dashed #E5E7EB;
+      color: #9CA3AF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 150px;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .content-container {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    video, canvas {
+      max-width: 100%;
+      border: 3px solid #E5E7EB;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    #registerContainer {
+      display: flex; /* 改为flex布局 */
+      justify-content: center; /* 水平居中 */
+      align-items: center; /* 垂直居中 */
+      width: 100%;
+      min-height: 200px; /* 设置最小高度 */
+    }
+
+   .grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+     gap: var(--spacing);
+     width: 100%;
+     max-width: 1200px; /* 限制最大宽度 */
+     margin: 0 auto;
+     padding: 1rem; /* 添加内边距 */
+   }
+
+    .empty {
+      border: 2px dashed #E5E7EB;
+      color: #9CA3AF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center; /* 确保文本居中 */
+      width: 100%;
+      max-width: 400px; /* 限制最大宽度 */
+      margin: 0 auto; /* 自动外边距确保居中 */
+    }
+
+    .empty i {
+      margin-bottom: 1rem; /* 图标和文字间距 */
+    }
+
+    .empty p {
+      margin: 0; /* 移除段落默认外边距 */
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* 以下分页样式 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      grid-column: 1 / -1; /* 让分页控件跨越所有列 */
+    }
+
+    .page-btn {
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      border: 1px solid #E5E7EB;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .page-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .page-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      margin: 0 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .card p {
+      word-wrap: break-word; /* 允许长单词换行到下一行 */
+      white-space: normal; /* 允许文本自动换行 */
+      margin: 0; /* 可选：清除默认边距 */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#hero" class="active">主页</a></li>
+        <li><a href="#attendance">签到</a></li>
+        <li><a href="#register">班级</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="hero" class="hero">
+    <div class="content-container">
+      <h1>欢迎进入班级考勤系统</h1>
+      <br>
+      <p>基于人脸识别和活体检测技术的BS架构班级考勤系统，摄像头采集人脸信息传输至后端，进行活体检测与人脸比对，实时返回考勤结果。</p>
+      <br>
+      <hr>
+      <br>
+      <p>项目共同开发：凌丹丹 王佳瑶</p>
+    </div>
+  </section>
+
+  <section id="attendance">
+    <div class="content-container">
+      <h2>签到考勤</h2>
+      <div id="attendanceStatus" class="status-message"></div>
+      <div class="buttons">
+        <button id="startCamera" class="btn-primary">
+          <i class="fa fa-video mr-2"></i> 开启摄像头
+        </button>
+        <button id="stopCamera" class="btn-danger" style="display:none;">
+          <i class="fa fa-stop mr-2"></i> 停止签到
+        </button>
+      </div>
+
+      <div class="mt-6">
+        <video id="video" autoplay playsinline style="display:none;"></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+      </div>
+
+      <div id="dynamicTitle" class="mt-6 p-4 bg-white rounded-lg shadow-md"></div>
+
+      <div class="buttons mt-6">
+        <button id="snap1" class="btn-secondary" style="display:none;">
+          <i class="fa fa-cloud-upload-alt mr-2"></i> 调用百度API
+        </button>
+        <button id="snap2" class="btn-secondary" style="display:none;">
+          <i class="fa fa-robot mr-2"></i> Antispoofing+arcface
+        </button>
+        <button id="snap3" class="btn-secondary" style="display:none;">
+          <i class="fa fa-brain mr-2"></i> FaceMatchNet
+        </button>
+        <button id="snap4" class="btn-secondary" style="display:none;">
+          <i class="fa fa-search mr-2"></i> Antispoofing+FaceNet
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="register">
+    <div class="content-container">
+      <h2>班级成员注册</h2>
+      <div id="registrationStatus" class="status-message"></div>
+      <div class="stats">
+        已注册人数: <span id="memberCount">0</span>
+      </div>
+
+      <div id="registerContainer">
+        <div id="emptyState" class="card empty">
+          <i class="fa fa-user-plus"></i>
+          <p>先点击【注册】进行班级成员注册，再点击【同步】加载成员数据。</p>
+        </div>
+      </div>
+
+      <div class="buttons mt-6">
+        <button id="registerMembers" class="btn-success mr-2">
+          <i class="fa fa-user-plus mr-2"></i> 注册班级成员
+        </button>
+        <button id="syncMembers" class="btn-primary mr-2">
+          <i class="fa fa-refresh mr-2"></i> 同步成员列表
+        </button>
+        <button id="clearRegister" class="btn-danger">
+          <i class="fa fa-trash mr-2"></i> 清空注册列表
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="/static/js/plugins.js" defer></script>
+  <script src="/static/js/main.js" defer></script>
+  <script defer src="/static/js/register.js"></script>
+  <script defer src="/static/js/face.js"></script>
+
+</body>
+</html>
